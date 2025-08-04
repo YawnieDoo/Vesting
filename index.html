@@ -1,35 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Yawnie Doo Whitepaper</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$Yawnie Vesting Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #00ffa1;
+      --secondary: #00ffff;
+      --bg: #121212;
+      --card-bg: rgba(255, 255, 255, 0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom right, #1a1a2e, #16213e);
-      color: #f5f5f5;
-      font-family: 'Segoe UI', sans-serif;
-      height: 100vh;
+      background: var(--bg);
+      color: white;
+      font-family: 'Baloo 2', cursive;
+    }
+    header { text-align: center; padding: 1.5rem; }
+    h1 { font-size: 2.5rem; margin: 0; }
+    .tabs {
       display: flex;
-      align-items: center;
+      flex-wrap: wrap;
       justify-content: center;
+      gap: 10px;
+      padding: 0 1rem;
+    }
+    .tab-button, .button-wrap a {
+      padding: 0.4rem 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .tab-button:hover, .button-wrap a:hover {
+      background: linear-gradient(135deg, var(--secondary), var(--primary));
+      transform: translateY(-2px);
+    }
+    .simple-link-button {
+      background: none;
+      color: var(--secondary);
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.2s ease;
+    }
+    .simple-link-button:hover { color: var(--primary); }
+    .tab-content { display: none; padding: 1rem; }
+    .tab-content.active { display: block; }
+    .vesting-section {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 2rem;
+      animation: floatVest 6s ease-in-out infinite;
+    }
+    .vesting-card h2 { font-size: 1.8rem; text-align: center; }
+    .vesting-card p, .vesting-card code, .vesting-card a {
+      font-size: 1.1rem;
+      color: #eee;
+      margin: 12px 0;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+    .vesting-card a {
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+    .vesting-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .vesting-table th, .vesting-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: left;
+    }
+    .vesting-table th { background: rgba(255, 255, 255, 0.1); }
+    .progress-wrap, .countdown, .button-wrap {
       text-align: center;
-      flex-direction: column;
+      margin-top: 1.5rem;
     }
-    h1 {
-      font-size: 2.5rem;
-      color: #ffd369;
+    .progress-bar {
+      height: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+      margin: 0 auto;
+      overflow: hidden;
     }
-    p {
-      font-size: 1.2rem;
-      color: #eeeeee;
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      width: 0%;
+    }
+    @keyframes floatVest {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @media (max-width: 600px) {
+      .vesting-card p, .vesting-card code, .vesting-card a { font-size: 1rem; }
+      .tab-button { font-size: 0.9rem; padding: 0.5rem 1rem; }
     }
   </style>
 </head>
 <body>
-  <h1>Yawnie Doo Whitepaper Coming Soon 💤</h1>
-  <p>Stay cozy. Stay tuned.</p>
+  <header>
+    <h1>$Yawnie Vesting Dashboard</h1>
+    <div class="tabs" id="tabs"></div>
+  </header>
+  <main id="content"></main>
+  <script>
+    const data = [
+
+      {
+        id: 'cex', title: 'CEX Listing', address: '3E1GDVRZyReekCtcKMGtBMQRLZaPD8ogbwJkLsxtagHg',
+        allocation: '60 million $Yawnie (6% of total supply)', platform: 'Streamflow Finance',
+        contract: 'Immutable', purpose: 'Support centralized exchange listings, including liquidity provisioning, listing fees, and promotions',
+        schedule: ["July 30, 2025 - October 31, 2025", "Linear", "12 months", "15 months", "5,000,000"],
+        unlock: '📅 Nov 1, 2025: 5,000,000 $Yawnie<br>📅 Dec 1, 2025 – Oct 1, 2026: 5,000,000 monthly',
+        proof: 'https://solscan.io/tx/y79jkaG83CuHQg4PWc6xKQxB3j57otqj8P7PWkLwabyKU4JhDcuArzj66eyX6qYb8xbC2WjmkF3w59qGLuYNbZE',
+        view: 'https://solscan.io/account/3E1GDVRZyReekCtcKMGtBMQRLZaPD8ogbwJkLsxtagHg',
+        streamflow: 'https://app.streamflow.finance/contract/solana/mainnet/aNiKWi6C2WZzVAmY7aBBCNHmP53Kmjb78JrhPAiaf6M',
+        next: '2025-11-01', final: '2026-10-01'
+      },
+
+      {
+        id: 'product-dev', title: 'Product Development', address: '45JaCSHqx2wrjF3mwcE5QJCaSdF6Kr4FH5cYnQ8ZzYri',
+        allocation: '150 million $Yawnie (15% of total supply)', platform: 'Streamflow Finance',
+        contract: 'Immutable', purpose: 'Support centralized exchange listings',
+        schedule: ["July 30, 2025 - October 31, 2025", "Linear", "24 months", "27 months", "6,250,000"],
+        unlock: '📅 Nov 1, 2025: 6,250,000 $Yawnie<br>📅 Dec 1, 2025 – Oct 1, 2027: 6,250,000 monthly',
+        proof: 'https://solscan.io/tx/4b7HgKDtrCp3noLMzaCeywuaVXmP3zLKnjbHKXA5RgtdoZGBChmUpoxJm8d5GUugMnaSwRTHwVVw4UF6F3n5PFfd',
+        view: 'https://solscan.io/account/45JaCSHqx2wrjF3mwcE5QJCaSdF6Kr4FH5cYnQ8ZzYri',
+        streamflow: 'https://app.streamflow.finance/contract/solana/mainnet/63NVhxyWNexpXXWjDXogi2nGG6F83Jd18NpGNEuS6TrF',
+        next: '2025-11-01', final: '2027-10-01'
+      },
+
+      {
+        id: 'marketing', title: 'Marketing', address: 'EsEKJGFhG3jDZBq4tw1gFPN5H2DDFFuj7fkv8kAEei9H',
+        allocation: '100 million $Yawnie (10% of total supply)', platform: 'Streamflow Finance',
+        contract: 'Immutable', purpose: 'Fund online ads, influencer promotions, and engaging content that boost visibility',
+        schedule: ["July 30, 2025 - October 31, 2025", "Linear", "18 months", "21 months", "5,000,000"],
+        unlock: '📅 Nov 1, 2025: 5,000,000 $Yawnie<br>📅 Dec 1, 2025 – Feb 3, 2027: 5,000,000 monthly',
+        proof: 'https://solscan.io/tx/41VUSYytJn1TNP3x3PchW2Wjs69i195HsEJfgPJBo1tpahXa8V93Khc4ufXhF94zen1KSLPYwFwNUNm2RQcPZUUX',
+        view: 'https://solscan.io/account/EsEKJGFhG3jDZBq4tw1gFPN5H2DDFFuj7fkv8kAEei9H',
+        streamflow: 'https://app.streamflow.finance/contract/solana/mainnet/8KtLeyLRafxxv1d8cyYJNXYiQTw3TGBKGUP2syMnraTy',
+        next: '2025-11-01', final: '2027-02-03'
+      },
+
+      {
+        id: 'grants', title: 'Grants & Bounties', address: 'HoxfeAXzY7AS3bR3FpPGug2R5n4xzrts8fesrnsirT5d',
+        allocation: '30 million $Yawnie (3% of total supply)', platform: 'Streamflow Finance',
+        contract: 'Immutable', purpose: '------------grants----------',
+        schedule: ["July 30, 2025 - October 31, 2025", "Linear", "18 months", "21 months", "1,555,500"],
+        unlock: '📅 Nov 1, 2025: 1,555,500 $Yawnie<br>📅 Dec 1, 2025 – Feb 2, 2027: 1,555,500 monthly',
+        proof: 'https://solscan.io/tx/48z5fdgDYetbt2dq9eMHNp9MjgpCZT7WpJvdZm65NRodFKSEJYx9Wqv3CraCeDBCQ6AL4CfZNU98CjSgzhRSEpi5',
+        view: 'https://solscan.io/account/HoxfeAXzY7AS3bR3FpPGug2R5n4xzrts8fesrnsirT5d',
+        streamflow: 'https://app.streamflow.finance/contract/solana/mainnet/BopVPR6FCPrcxNvB5cDMbzvGcMaYrwmyJ2Mj9ivuG2TD',
+        next: '2025-11-01', final: '2027-02-02'
+      },
+
+      {
+        id: 'developer', title: 'Dev Wallet', address: 'HxmuDwND143cFwbUCxgJynF9TMdWtHX6VvZPGQ8e7qXf',
+        allocation: '30 million $Yawnie (3% of total supply)', platform: 'Streamflow Finance',
+        contract: 'Immutable', purpose: '----------------dev wallet-----------',
+        schedule: ["July 30, 2025 - October 31, 2025", "Linear", "24 months", "27 months", "1,250,000"],
+        unlock: '📅 Nov 1, 2025: 1,250,000 $Yawnie<br>📅 Dec 1, 2025 – Oct 1, 2027: 1,250,000 monthly',
+        proof: 'https://solscan.io/tx/46xKTBTvnv6VP52qxggKwSGHSk8P4bWL7qcemf3XuAmc2YuoZgTtfSnj2F6rs7GMfuVQVXSwp44LzganwtLYtnAa',
+        view: 'https://solscan.io/account/HxmuDwND143cFwbUCxgJynF9TMdWtHX6VvZPGQ8e7qXf',
+        streamflow: 'https://app.streamflow.finance/contract/solana/mainnet/ENoAmydf3vzgXqw1AMoH2Eovh5N3FYxtUQgDEh7utQVb',
+        next: '2025-11-01', final: '2027-10-01'
+      },
+
+      {
+        id: 'dao', title: 'DAO Treasury', address: '9hMCkuoNKWKhuBGiSZHD2Tr1zD2fmJNeTBPzzEaZ5qUo',
+        allocation: '79 million $Yawnie (7.9% of total supply)', platform: 'Streamflow Finance',
+        contract: 'Immutable', purpose: '----------------DAO-----------',
+        schedule: ["July 31, 2025 - January 31, 2026", "Linear", "36 months", "42 months", "1,975,000"],
+        unlock: '📅 Feb 1, 2026: 1,975,000 $Yawnie<br>📅 March 1, 2026 – Dec 31, 2028: 1,975,000 monthly',
+        proof: 'https://solscan.io/tx/4rtzyTYFKfmAX3vVkxLvtkHo6j2BWKwFadgFtwaGkciqhdHSyS9hCys1P5WWMk1WG313yebu8zaWfVa7MmXj2Ejn',
+        view: 'https://solscan.io/account/9hMCkuoNKWKhuBGiSZHD2Tr1zD2fmJNeTBPzzEaZ5qUo',
+        streamflow: 'https://app.streamflow.finance/contract/solana/mainnet/GTceBF16sgW3pwQzEBZ7dSdnTyCYsffVHiTGFRqW78NJ',
+        next: '2026-02-01', final: '2028-12-31'
+      },
+
+
+      {
+        id: 'advisory', title: 'Advisory', address: '8nTJh3e3ddv8HL8DAMFnLyyx1Zuw9mymYYf5PZgmBVZ1',
+        allocation: '40 million $Yawnie (4% of total supply)', platform: 'Streamflow Finance',
+        contract: 'Immutable', purpose: '----------------advisory-----------',
+        schedule: ["July 31, 2025 - January 31, 2026", "Linear", "24 months", "30 months", "1,500,000"],
+        unlock: '📅 Feb 1, 2026: 1,500,000 $Yawnie<br>📅 March 1, 2026 – Jan 31, 2028: 1,500,000 monthly',
+        proof: 'https://solscan.io/tx/4aDoGYPyCSRBffFZT7NDVhSA818gk1Wy3Rwr22K3gRu1AooALB8jR6r6RXDMQTE55V4ac3pz9vakdgNh7t3Dswq2',
+        view: 'https://solscan.io/account/8nTJh3e3ddv8HL8DAMFnLyyx1Zuw9mymYYf5PZgmBVZ1',
+        streamflow: 'https://app.streamflow.finance/contract/solana/mainnet/9KsibsJxdpTo9eYPyuzdcesHPfSyLfqjkh2Nad8DQ1Z1',
+        next: '2026-02-01', final: '2028-02-29'
+      },
+
+     {
+        id: 'partnerships', title: 'Partnerships', address: 'Fq7otbv2byjk6asZZJgN7Wt4Ps4pNnn2TU4e1w6YR1dt',
+        allocation: '60 million $Yawnie (6% of total supply)', platform: 'Streamflow Finance',
+        contract: 'Immutable', purpose: '----------------partnerships-----------',
+        schedule: ["August 1, 2025 - January 1, 2026", "Linear", "24 months", "29 months", "1,652,700"],
+        unlock: '📅 Jan 1, 2026: 1,652,700 $Yawnie<br>📅 Feb 1, 2026 – Dec 31, 2028: 1,652,700 monthly',
+        proof: 'https://solscan.io/tx/4aDoGYPyCSRBffFZT7NDVhSA818gk1Wy3Rwr22K3gRu1AooALB8jR6r6RXDMQTE55V4ac3pz9vakdgNh7t3Dswq2',
+        view: 'https://solscan.io/account/Fq7otbv2byjk6asZZJgN7Wt4Ps4pNnn2TU4e1w6YR1dt',
+        streamflow: 'https://app.streamflow.finance/contract/solana/mainnet/5aWEddUHJwmpaMaGfyYW8XkzYapkJoG867UmPsQBnUGt',
+        next: '2026-02-01', final: '2028-12-31'
+      },
+
+      {
+        id: 'staking', title: 'Staking Rewards', address: '8his79mbQuKoC2kGvAqxg3HqDLg5Rj8gnPGuGdGqeRE4',
+        allocation: '200 million $Yawnie (20% of total supply)', platform: 'Streamflow Finance',
+        contract: 'Immutable', purpose: '----------------staking-----------',
+        schedule: ["August 2, 2025 - June 1, 2026", "Linear", "12 months", "22 months", "50,000,000"],
+        unlock: '📅 June 1, 2026: 50,000,000 $Yawnie<br>📅 July 1, 2026 – June 1, 2027: 50,000,000 quarterly',
+        proof: 'https://solscan.io/tx/3sqhRHGCP4csHLp5M1YubqffaerkpdwsNnG3EbhoQXGtzcrWzCc6PqKr2sqFsb2SuMrJ8Dd5Nv9nrHVFfUYA2mTW',
+        view: 'https://solscan.io/account/8his79mbQuKoC2kGvAqxg3HqDLg5Rj8gnPGuGdGqeRE4',
+        streamflow: 'https://app.streamflow.finance/contract/solana/mainnet/F9gnsxqHNmKFyToWHgT2sGj3a16jQZpC3RjUUcrRAmvn',
+        next: '2026-06-01', final: '2027-06-01'
+      },
+    ];
+
+
+    function createTabs() {
+      const tabs = document.getElementById('tabs');
+      data.forEach((d, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-button';
+        btn.textContent = d.title;
+        btn.onclick = () => switchTab(d.id);
+        tabs.appendChild(btn);
+      });
+    }
+
+    function createContent() {
+      const container = document.getElementById('content');
+      data.forEach(d => {
+        const div = document.createElement('div');
+        div.id = d.id;
+        div.className = 'tab-content';
+        div.innerHTML = `
+          <div class="vesting-section">
+            <div class="vesting-card">
+              <h2>${d.title} Vesting Schedule</h2>
+              <p><strong>Wallet Address:</strong></p>
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:12px;">
+                <code onclick="copyToClipboard('${d.address}')">${d.address}</code>
+                <a class="simple-link-button" href="${d.view}" target="_blank">View on SolScan</a>
+              </div>
+              <p><strong>Allocated Tokens:</strong> ${d.allocation}</p>
+              <p><strong>Vesting Platform:</strong> <a href="${d.streamflow}" target="_blank">${d.platform}</a></p>
+              <p><strong>Contract Type:</strong> ${d.contract}</p>
+              <p><strong>Purpose:</strong><br>${d.purpose}</p>
+              <table class="vesting-table">
+                <tr><th>Parameter</th><th>Details</th></tr>
+                <tr><td>Cliff Period</td><td>${d.schedule[0]}</td></tr>
+                <tr><td>Vesting Type</td><td>${d.schedule[1]}</td></tr>
+                <tr><td>Vesting Duration</td><td>${d.schedule[2]}</td></tr>
+                <tr><td>Total Lock Period</td><td>${d.schedule[3]}</td></tr>
+                <tr><td>Unlock Rate</td><td>${d.schedule[4]} tokens per month</td></tr>
+              </table>
+              <p><strong>Unlock Schedule:</strong><br>${d.unlock}</p>
+              <div class="countdown">
+                <p><strong>Next Unlock In:</strong> <span id="next-${d.id}"></span></p>
+                <p><strong>Fully Unlocked In:</strong> <span id="final-${d.id}"></span></p>
+              </div>
+              <div class="progress-wrap">
+                <p><strong>Vesting Progress</strong></p>
+                <div class="progress-bar"><div class="progress-fill" id="bar-${d.id}"></div></div>
+              </div>
+              <div class="button-wrap">
+                <a href="${d.proof}" target="_blank">View Proof of Lock</a>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function switchTab(id) {
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => alert("Wallet address copied to clipboard!"));
+    }
+
+    function formatTime(ms) {
+      const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24,
+            m = Math.floor(ms / 6e4) % 60, s = Math.floor(ms / 1e3) % 60;
+      return `${d}d ${h}h ${m}m ${s}s`;
+    }
+
+    function updateCountdowns() {
+      const now = new Date();
+      data.forEach(d => {
+        const next = new Date(d.next + "T00:00:00Z"), final = new Date(d.final + "T00:00:00Z");
+        const toNext = next - now, toFinal = final - now, total = final - next, elapsed = now - next;
+        document.getElementById("next-"+d.id).textContent = toNext > 0 ? formatTime(toNext) : "Already unlocked";
+        document.getElementById("final-"+d.id).textContent = toFinal > 0 ? Math.floor(toFinal / 864e5) + " days" : "Fully unlocked";
+        const pct = Math.min(Math.max((elapsed / total) * 100, 0), 100);
+        document.getElementById("bar-"+d.id).style.width = `${pct}%`;
+      });
+    }
+
+    createTabs();
+    createContent();
+    switchTab(data[0].id);
+    updateCountdowns();
+    setInterval(updateCountdowns, 1000);
+  </script>
 </body>
 </html>
