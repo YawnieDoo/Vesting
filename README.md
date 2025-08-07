@@ -1,2 +1,2 @@
-# Whitepaper
-Yawnie Doo Whitepaper
+# Proof of Token Vesting
+Yawnie Doo - Proof of Token Vesting
